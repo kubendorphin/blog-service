@@ -79,7 +79,7 @@ func setupLogger() error {
 		MaxSize:  600,
 		MaxAge:   10,
 		Compress: true,
-	}, "", log.LstdFlags).WithCaller(2)
+	}, "", log.LstdFlags).WithCaller(2) //跳过2层调用，从调用该函数的地方开始计数
 	return nil
 }
 

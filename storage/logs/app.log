@@ -1,1 +1,2 @@
 2024/12/25 14:11:12 {"callers":["C:/Users/comed/GolandProjects/awesomeProject/blog-service/main.go: 29 main.init.0"],"level":"info","message":"debug: blog-service started","time":1735107072830434200}
+2024/12/26 18:33:57 {"callers":["C:/Users/comed/GolandProjects/awesomeProject/blog-service/main.go: 31 main.init.0"],"context":null,"level":"info","message":"debug: blog-service started","time":1735209237944394800}

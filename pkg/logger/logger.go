@@ -30,6 +30,7 @@ const (
 	LevelPanic
 )
 
+// 将传入的日志级别（Level类型的值）转换为字符串
 func (l Level) String() string {
 	switch l {
 	case LevelDebug:
@@ -54,6 +55,7 @@ func NewLogger(w io.Writer, prefix string, flag int) *Logger {
 	return &Logger{newLogger: log.New(w, prefix, flag)} //用一行写完逻辑，比上面的代码更简洁
 }
 
+// 克隆 Logger 对象，返回一个新的 Logger 对象，它具有与当前 Logger 对象相同的配置，但可能有一些额外的字段或不同的上下文
 func (l *Logger) clone() *Logger {
 	nl := *l
 	return &nl
@@ -61,21 +63,21 @@ func (l *Logger) clone() *Logger {
 
 // 设置公共字段
 func (l *Logger) WithFields(f Filelds) *Logger {
-	ll := l.clone()
-	if ll.fields == nil {
+	ll := l.clone()       // 创建一个Logger的对象ll
+	if ll.fields == nil { // 如果Logger对象的fields字段为空，则创建一个新的map
 		ll.fields = make(Filelds)
 	}
-	for k, v := range f {
+	for k, v := range f { // 遍历传入的字段，将其添加到Logger对象的fields字段中
 		ll.fields[k] = v
 	}
-	return ll
+	return ll // 返回新的Logger对象
 }
 
 // 设置日志日志上下文
 func (l *Logger) WithContext(ctx context.Context) *Logger {
-	ll := l.clone()
-	ll.ctx = ctx
-	return ll
+	ll := l.clone() //克隆一个Logger对象
+	ll.ctx = ctx    //将传入的上下文赋值给Logger对象的ctx字段
+	return ll       //返回新的Logger对象
 }
 
 // 设置当前某一层调用栈的信息
@@ -109,12 +111,21 @@ func (l *Logger) WithCallersFrames() *Logger {
 	return ll
 }
 
+// 将日志数据格式化为 JSON 格式，便于记录和传输
 func (l *Logger) JSONFormat(level Level, message string) map[string]interface{} {
+	// 创建一个新的 map，用于存储日志数据
 	data := make(Filelds, len(l.fields)+4)
+	// 将日志的级别转换为字符串，并存储在 map 中，键为 "level"
 	data["level"] = level.String()
+	// 将日志的上下文转换为字符串，并存储在 map 中，键为 "context"
+	data["context"] = l.ctx
+	// 将日志的时间转换为 Unix 时间戳，并存储在 map 中，键为 "time"
 	data["time"] = time.Now().Local().UnixNano()
+	// 将日志的消息存储在 map 中，键为 "message"
 	data["message"] = message
+	// 将日志的调用栈信息存储在 map 中，键为 "callers"
 	data["callers"] = l.callers
+	// 如果日志的公共字段不为空，则将其存储在 map 中，键为日志的公共字段的键
 	if len(l.fields) > 0 {
 		for k, v := range l.fields {
 			if _, ok := data[k]; !ok {
@@ -126,8 +137,8 @@ func (l *Logger) JSONFormat(level Level, message string) map[string]interface{} 
 }
 
 func (l *Logger) Output(level Level, message string) {
-	body, _ := json.Marshal(l.JSONFormat(level, message))
-	content := string(body)
+	body, _ := json.Marshal(l.JSONFormat(level, message)) //将日志数据格式化为 JSON 格式
+	content := string(body)                               //将 JSON 格式的日志数据转换为字符串
 	switch level {
 	case LevelDebug:
 		l.newLogger.Print(content)
