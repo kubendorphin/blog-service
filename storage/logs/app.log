@@ -1,2 +1,5 @@
 2024/12/25 14:11:12 {"callers":["C:/Users/comed/GolandProjects/awesomeProject/blog-service/main.go: 29 main.init.0"],"level":"info","message":"debug: blog-service started","time":1735107072830434200}
 2024/12/26 18:33:57 {"callers":["C:/Users/comed/GolandProjects/awesomeProject/blog-service/main.go: 31 main.init.0"],"context":null,"level":"info","message":"debug: blog-service started","time":1735209237944394800}
+2024/12/26 23:48:17 {"callers":["C:/Users/comed/GolandProjects/awesomeProject/blog-service/main.go: 31 main.init.0"],"context":null,"level":"info","message":"debug: blog-service started","time":1735228097525638300}
+2024/12/26 23:58:04 {"callers":["C:/Users/comed/GolandProjects/awesomeProject/blog-service/main.go: 31 main.init.0"],"context":null,"level":"info","message":"debug: blog-service started","time":1735228684082634100}
+2024/12/27 12:04:43 {"callers":["C:/Users/comed/GolandProjects/awesomeProject/blog-service/main.go: 31 main.init.0"],"context":null,"level":"info","message":"debug: blog-service started","time":1735272283757723700}

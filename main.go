@@ -83,6 +83,10 @@ func setupLogger() error {
 	return nil
 }
 
+// @title 博客系统
+// @version 1.0
+// @description Go 语言编程之旅：一起用 Go 做项目
+// @termsOfService https://github.com/go-programming-tour-book
 func main() {
 	// demo
 	//r := gin.Default()
@@ -103,12 +107,6 @@ func main() {
 		MaxHeaderBytes: 1 << 20, // 1MB
 	}
 	fmt.Println("start http server listening", global.ServerSetting.HttpPort)
-	// 健康检查
-	router.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
-	})
 	// 测试日志
 	global.Logger.Infof("%s: blog-service started", "debug")
 	// debug
