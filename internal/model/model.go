@@ -1,12 +1,11 @@
 package model
 
 import (
+	"blog-service/global"
+	"blog-service/pkg/setting"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-
-	"blog-service/global"
-	"blog-service/pkg/setting"
 )
 
 type Model struct {
@@ -53,7 +52,69 @@ func NewDBEngine(databaseSetting *setting.DatabaseSettingS) (*gorm.DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	updateTimeStampForCreateCallback(db)
+	updateTimeStampForUpdateCallback(db)
+	deleteCallback(db)
 	sqlDB.SetMaxIdleConns(databaseSetting.MaxIdleConns)
 	sqlDB.SetMaxOpenConns(databaseSetting.MaxOpenConns)
 	return db, nil
+}
+
+// 新增行为的回调 基于旧版本gorm编写
+//
+//	func updateTimeStampForCreateCallback(scope *gorm.Scope) {
+//		if scope.HasError() {
+//			nowTime := time.Now().Unix()
+//			if createTimeField, ok := scope.FieldByName("CreatedOn"); ok {
+//				if createTimeField.IsBlank {
+//					_ = createTimeField.Set(nowTime)
+//				}
+//			}
+//			if modifyTimeField, ok := scope.FieldByName("ModifiedOn"); ok {
+//				if modifyTimeField.IsBlank {
+//					_ = modifyTimeField.Set(nowTime)
+//				}
+//			}
+//		}
+//	}
+//
+// 基于新版本gorm编写
+func updateTimeStampForCreateCallback(db *gorm.DB) {
+	db.Callback().Create().Before("gorm:cteate").Register("update_timestamp", func(tx *gorm.DB) {
+		nowTime := tx.Statement.Context.Value("nowTime")
+		if nowTime == nil {
+			nowTime = tx.NowFunc().Unix()
+		}
+		//tx.Statement.SetColumn("CreatedOn", nowTime)
+		if tx.Statement.Schema != nil {
+			if createdOnField, ok := tx.Statement.Schema.FieldsByName["CreatedOn"]; ok {
+				if createdOnField.Tag.Get("UPDATE") == "false" {
+					tx.Statement.SetColumn("CreatedOn", nowTime)
+				}
+			}
+		}
+		tx.Statement.SetColumn("ModifiedOn", nowTime)
+	})
+}
+
+// 新增更新行为的回调
+func updateTimeStampForUpdateCallback(db *gorm.DB) {
+	db.Callback().Update().Before("gorm:update").Register("update_timestamp", func(tx *gorm.DB) {
+		nowTime := tx.Statement.Context.Value("nowTime")
+		if nowTime == nil {
+			nowTime = tx.NowFunc().Unix()
+		}
+		tx.Statement.SetColumn("ModifiedOn", nowTime)
+	})
+}
+
+// 新增删除行为的回调
+func deleteCallback(db *gorm.DB) {
+	db.Callback().Delete().Before("gorm:delete").Register("delete_timestamp", func(tx *gorm.DB) {
+		nowTime := tx.Statement.Context.Value("nowTime")
+		if nowTime == nil {
+			nowTime = tx.NowFunc().Unix()
+		}
+		tx.Statement.SetColumn("DeletedOn", nowTime)
+	})
 }
