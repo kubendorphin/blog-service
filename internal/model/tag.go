@@ -47,3 +47,16 @@ func (t Tag) Update(db *gorm.DB) error {
 func (t Tag) Delete(db *gorm.DB) error {
 	return db.Where("id = ? and is_del = ?", t.ID, 0).Delete(&t).Error
 }
+
+// 补充定义标签的方法
+func (t Tag) List(db *gorm.DB, pageOffset, pageSize int) ([]*Tag, error) {
+	var tags []*Tag
+	var err error
+	if pageOffset >= 0 && pageSize > 0 {
+		db = db.Offset(pageOffset).Limit(pageSize)
+	}
+	if t.Name != "" {
+		db = db.Where("name =?", t.Name)
+	}
+	return tags, err
+}

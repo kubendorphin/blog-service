@@ -12,9 +12,9 @@ type Response struct {
 
 // 定义一个分页器结构体
 type Pager struct {
-	Page      int `json:"page"`
-	PageSize  int `json:"page_size"`
-	TotalRows int `json:"total_rows"`
+	Page      int   `json:"page"`
+	PageSize  int   `json:"page_size"`
+	TotalRows int64 `json:"total_rows"`
 }
 
 // 定义了一个名为 NewResponse 的函数。
@@ -42,7 +42,7 @@ func (r *Response) ToResponse(data interface{}) {
 // "list" 字段的值为传入的 list 接口参数，表示要返回的列表数据；
 // "pager" 字段的值为一个 Pager 结构体，其中包含了分页信息，包括当前页码、每页大小和总记录数。
 // 这个方法用于构建一个包含列表数据和分页信息的响应，以便在客户端进行展示。
-func (r *Response) ToResponseList(list interface{}, totalRows int) {
+func (r *Response) ToResponseList(list interface{}, totalRows int64) {
 	r.Ctx.JSON(200, gin.H{
 		"list": list,
 		"pager": Pager{

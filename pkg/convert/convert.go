@@ -28,7 +28,7 @@ func (s StrTo) Uint32() (uint32, error) {
 }
 
 // MustUint32 方法将StrTo类型转换为uint32类型，如果转换失败则返回0
-func (s StrTo) MustUint32() uint32 {
+func (s StrTo) MustUInt32() uint32 {
 	v, _ := s.Uint32()
 	return v
 }
